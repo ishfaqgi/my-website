@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Diya 💗</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #050008;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+      padding: 20px;
+    }
+
+    .wrap {
+      background: #0a0010;
+      min-height: 600px;
+      width: 100%;
+      max-width: 560px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #ff6eb433;
+      box-shadow: 0 0 60px #e8315a22, 0 0 120px #7700aa11;
+    }
+
+    canvas#stars {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 1;
+      min-height: 600px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .screen.active { display: flex; }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% }
+      100% { background-position: 200% }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.1); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 60px #e8315a22, 0 0 120px #7700aa11; }
+      50%       { box-shadow: 0 0 80px #e8315a44, 0 0 160px #7700aa22; }
+    }
+
+    .wrap { animation: glowPulse 4s ease-in-out infinite; }
+
+    .title-name {
+      font-size: 54px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff6eb4, #ffd6ec, #ff6eb4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 3px;
+      animation: shimmer 3s linear infinite;
+      background-size: 200%;
+    }
+
+    .subtitle {
+      color: #c9a0c9;
+      font-size: 16px;
+      margin-top: 10px;
+      font-style: italic;
+      animation: fadeUp 1s ease 0.4s both;
+    }
+
+    .big-heart {
+      font-size: 80px;
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+      margin-bottom: 1.2rem;
+      filter: drop-shadow(0 0 24px #ff4488);
+    }
+
+    .sorry-text {
+      color: #f0d0e8;
+      font-size: 17px;
+      line-height: 1.9;
+      max-width: 420px;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+
+    .btn-main {
+      margin-top: 1.8rem;
+      padding: 14px 38px;
+      border-radius: 50px;
+      border: none;
+      font-size: 16px;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      background: linear-gradient(135deg, #e8315a, #ff6eb4);
+      color: #fff;
+      letter-spacing: 1px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px #e8315a66;
+    }
+
+    .btn-main:hover {
+      transform: scale(1.06);
+      box-shadow: 0 8px 32px #e8315a99;
+    }
+
+    .btn-ghost {
+      margin-top: 1rem;
+      padding: 10px 28px;
+      border-radius: 50px;
+      border: 1.5px solid #ff6eb488;
+      background: transparent;
+      color: #ff6eb4;
+      font-size: 14px;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover { background: #ff6eb422; }
+
+    .reason-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 440px;
+      margin: 1.5rem auto 0;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+
+    .reason-card {
+      background: #1a0828;
+      border: 1px solid #ff6eb444;
+      border-radius: 14px;
+      padding: 16px 12px;
+      color: #f0d0e8;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .reason-icon {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .meter-wrap {
+      width: 100%;
+      max-width: 360px;
+      margin: 1.5rem auto;
+      animation: fadeUp 0.8s ease 0.5s both;
+    }
+
+    .meter-label {
+      color: #c9a0c9;
+      font-size: 13px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .meter-track {
+      background: #1a0828;
+      border-radius: 50px;
+      height: 14px;
+      overflow: hidden;
+      border: 1px solid #ff6eb444;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #e8315a, #ff6eb4, #ffd6ec);
+      width: 0%;
+      transition: width 1.5s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 1.8rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3a1050;
+      transition: background 0.4s;
+    }
+
+    .dot.active { background: #ff6eb4; }
+
+    .forgive-wrap {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.8rem;
+    }
+
+    .final-msg {
+      color: #ffd6ec;
+      font-size: 17px;
+      line-height: 1.9;
+      max-width: 400px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .confetti-emoji {
+      font-size: 42px;
+      display: block;
+      margin-bottom: 1rem;
+      animation: spin 4s linear infinite;
+    }
+
+    .section-label {
+      color: #ff6eb4;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    em.highlight { color: #ff9fd4; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <canvas id="stars"></canvas>
+
+  <!-- Screen 0: Intro -->
+  <div class="screen active" id="s0">
+    <span style="font-size:72px;animation:pulse 1.5s ease-in-out infinite;filter:drop-shadow(0 0 24px #ff4488);display:block;margin-bottom:1.2rem;">💗</span>
+    <div class="title-name">Diya</div>
+    <div class="subtitle">I have something important to say to you...</div>
+    <button class="btn-main" onclick="goTo(1)">Open my heart &rarr;</button>
+  </div>
+
+  <!-- Screen 1: Sorry message + love meter -->
+  <div class="screen" id="s1">
+    <div class="section-label">I'm sorry, Diya</div>
+    <p class="sorry-text">
+      Diya, I hurt you — and that is the one thing I never wanted to do.<br><br>
+      You are my light, my calm, my favourite person in this whole world. And I let you down. I am sorry from the very bottom of my heart. Not just sorry — <em class="highlight">deeply, completely sorry.</em>
+    </p>
+    <div class="meter-wrap">
+      <div class="meter-label">
+        <span>How much I miss you</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="meter-track">
+        <div class="meter-fill" id="mfill"></div>
+      </div>
+    </div>
+    <button class="btn-main" onclick="goTo(2)">See why you mean so much &rarr;</button>
+    <div class="progress-dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Reasons -->
+  <div class="screen" id="s2">
+    <div class="section-label">Things I love about you</div>
+    <div class="reason-grid">
+      <div class="reason-card"><span class="reason-icon">🌙</span>The way your eyes light up when you laugh</div>
+      <div class="reason-card"><span class="reason-icon">🌹</span>Your kindness — you care so deeply</div>
+      <div class="reason-card"><span class="reason-icon">✨</span>How strong you are, even when it's hard</div>
+      <div class="reason-card"><span class="reason-icon">🎵</span>Every little thing that makes you, you</div>
+      <div class="reason-card"><span class="reason-icon">💫</span>Your smile that fixes everything</div>
+      <div class="reason-card"><span class="reason-icon">🦋</span>The magic you bring into my life</div>
+    </div>
+    <button class="btn-main" style="margin-top:1.5rem;" onclick="goTo(3)">One last thing &rarr;</button>
+    <div class="progress-dots">
+      <div class="dot"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Forgive me -->
+  <div class="screen" id="s3">
+    <div class="section-label">Diya, will you forgive me?</div>
+    <span style="font-size:68px;display:block;animation:pulse 1.5s ease-in-out infinite;filter:drop-shadow(0 0 20px #ff4488);margin-bottom:1rem;">🥺</span>
+    <p style="color:#f0d0e8;font-size:16px;max-width:360px;line-height:1.9;font-style:italic;">
+      "I promise to be better. To never make you feel that way again. You deserve all the love in the world — and I want to be the one who gives it to you."
+    </p>
+    <div class="forgive-wrap">
+      <button class="btn-main" onclick="goTo(4)">Yes, I forgive you 💖</button>
+      <button class="btn-ghost" id="noBtn" onmouseover="dodge()" onclick="goTo(4)">Not yet...</button>
+    </div>
+    <div class="progress-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot active"></div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Thank you -->
+  <div class="screen" id="s4">
+    <span class="confetti-emoji">🎊</span>
+    <div class="title-name" style="font-size:40px;">Thank you, Diya!</div>
+    <p class="final-msg" style="margin-top:1.2rem;">
+      You just made me the happiest person alive. 💕<br><br>
+      I promise to love you better, every single day. You are my everything — and I will never take that for granted again.
+    </p>
+    <div style="font-size:34px;margin-top:1.8rem;letter-spacing:10px;animation:pulse 2s ease-in-out infinite;">🌹 💗 🌹</div>
+  </div>
+</div>
+
+<script>
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+
+  function resizeCanvas() {
+    c.width = c.offsetWidth;
+    c.height = c.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const stars = Array.from({ length: 150 }, () => ({
+    x: Math.random() * c.width,
+    y: Math.random() * c.height,
+    r: Math.random() * 1.5 + 0.3,
+    a: Math.random(),
+    da: 0.004 + Math.random() * 0.012
+  }));
+
+  function drawStars() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a > 1 || s.a < 0) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 200, 240, ${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+
+  let dodgeCount = 0;
+  function dodge() {
+    dodgeCount++;
+    const btn = document.getElementById('noBtn');
+    const wrap = btn.parentElement;
+    const maxX = wrap.offsetWidth - btn.offsetWidth - 20;
+    btn.style.position = 'relative';
+    btn.style.left = Math.floor(Math.random() * maxX - maxX / 2) + 'px';
+    btn.style.top = Math.floor(Math.random() * 40 - 20) + 'px';
+    if (dodgeCount > 4) btn.textContent = 'Stop chasing me! 😂';
+    if (dodgeCount > 7) {
+      btn.textContent = 'Fine, I forgive you 💕';
+      btn.onmouseover = null;
+      btn.onclick = () => goTo(4);
+    }
+  }
+
+  function goTo(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('s' + n).classList.add('active');
+    resizeCanvas();
+
+    if (n === 1) {
+      setTimeout(() => {
+        let v = 0;
+        const fill = document.getElementById('mfill');
+        const pct = document.getElementById('pct');
+        const iv = setInterval(() => {
+          v += 1;
+          fill.style.width = v + '%';
+          pct.textContent = v + '%';
+          if (v >= 100) clearInterval(iv);
+        }, 15);
+      }, 300);
+    }
+  }
+</script>
+
+</body>
+</html>
